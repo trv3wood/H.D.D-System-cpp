@@ -1,10 +1,10 @@
 #include "aboutscreen.h"
 #include "ui_aboutscreen.h"
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QFontDatabase>
 #include <QSound>
 #include <QPushButton>
+#include <QScreen>
 
 AboutScreen::AboutScreen(QWidget *parent)
     : QWidget(parent)
@@ -27,7 +27,7 @@ void AboutScreen::initUI() {
     if (this->parentWidget()) {
         screenSize = parentWidget()->size();
     } else {
-        screenSize = QApplication::desktop()->size();
+        screenSize = QApplication::screens().at(0)->size();
     }
     this->resize(screenSize);
     ui->frame->resize(screenSize);

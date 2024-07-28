@@ -43,13 +43,18 @@ color: white;
 QPushButton::hover{
 	background-color: rgb(165, 194, 0);
 }
-</string>
+#label{
+background-color: transparent;
+}
+QMessageBox{
+	background-color: rgb(246, 245, 244);
+}</string>
    </property>
    <property name="frameShape">
-    <enum>QFrame::StyledPanel</enum>
+    <enum>QFrame::Shape::StyledPanel</enum>
    </property>
    <property name="frameShadow">
-    <enum>QFrame::Raised</enum>
+    <enum>QFrame::Shadow::Raised</enum>
    </property>
    <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
@@ -110,7 +115,7 @@ QPushButton::hover{
      <string/>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignmentFlag::AlignCenter</set>
     </property>
    </widget>
   </widget>

@@ -5,7 +5,7 @@
 
 struct SYSinfo {
     std::array<std::string, 7> m_data = {
-        "// SYSTEM SELF TEST", "CPU_NAME", "CPU_CORES",
+        "// SYSTEM SELF-TEST", "CPU_NAME", "CPU_CORES",
         "CPU_THREADS",         "MEMORY",    "DISK",     "// COMPLETE."};
 
     SYSinfo();

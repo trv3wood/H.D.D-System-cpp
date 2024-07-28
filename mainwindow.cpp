@@ -1,13 +1,13 @@
-#include <QDesktopWidget>
+#include <QApplication>
+#include <QFontDatabase>
 #include <QGraphicsOpacityEffect>
 #include <QLabel>
 #include <QPixmap>
 #include <QPropertyAnimation>
+#include <QScreen>
 #include <QString>
 #include <QTextEdit>
 #include <QTimer>
-#include <QFontDatabase>
-#include <QApplication>
 #include <chrono>
 #include <sstream>
 #include <string>
@@ -34,19 +34,19 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("H.D.D System");
 
     // 获取屏幕大小
-    QSize sreen_size = QApplication::desktop()->size();
+    QSize screen_size = QApplication::screens().at(0)->size();
     // 设置窗口大小
     this->showFullScreen();
     this->setMinimumSize(800, 600);
-    this->centralWidget()->resize(sreen_size);
+    this->centralWidget()->resize(screen_size);
 
     // 设置文本框
-    QFont font("Microsoft Yahei", this->size().height() / 120.0);
+    QFont font("Microsoft Yahei", 14);
     ui->textEdit->setFont(font);
     ui->textEdit->setStyleSheet("color: white;");
     ui->textEdit->setAlignment(Qt::AlignLeft);
     ui->textEdit->setReadOnly(true);
-    ui->textEdit->resize(sreen_size * 0.9);
+    ui->textEdit->resize(screen_size * 0.9);
     ui->textEdit->setFrameShape(QFrame::NoFrame);
 
     // 将定时器绑定到自检更新函数
@@ -58,7 +58,10 @@ MainWindow::MainWindow(QWidget *parent)
     m_timer->start(700);
 }
 
-MainWindow::~MainWindow() { delete ui; }
+MainWindow::~MainWindow() {
+    delete ui;
+    delete m_titlescreen;
+}
 
 void MainWindow::selfTestUpdate() {
     QTextEdit *textEdit = ui->textEdit;
@@ -89,7 +92,8 @@ void MainWindow::codePrintUpdate() {
         textEdit->append(buf.c_str());
     } else {
         // 打印完成后，停止定时器，等待0.5秒后发出启动完成信号
-        disconnect(m_timer, &QTimer::timeout, this, &MainWindow::codePrintUpdate);
+        disconnect(m_timer, &QTimer::timeout, this,
+                   &MainWindow::codePrintUpdate);
         delete m_timer;
         m_timer = nullptr;
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
