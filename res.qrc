@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/bootScreen.png</file>
+        <file>res/zzzExplorer.mp3</file>
+        <file>res/Icon.ico</file>
+        <file>res/bg.png</file>
+        <file>res/zzzfont.ttf</file>
+        <file>res/click.wav</file>
+    </qresource>
+</RCC>
