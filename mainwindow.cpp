@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent)
       ui(new Ui::MainWindow),
       m_timer(new QTimer(this)),
       m_sysinfo(new SYSinfo()),
-      m_bootScreen(nullptr),
+    //   m_bootScreen(nullptr),
       m_effect(nullptr),
       m_animation(nullptr),
       m_label(nullptr),
@@ -102,18 +102,54 @@ void MainWindow::codePrintUpdate() {
 }
 
 void MainWindow::loadBootScreen() {
+    disconnect(this, &MainWindow::bootCompleted, this, &MainWindow::loadBootScreen);
     ui->textEdit->hide();
     // 设置启动画面
     m_label = new QLabel(this);
-    m_bootScreen = new QPixmap(":/res/bootScreen.png");
-    m_bootScreen->scaled(this->size(), Qt::KeepAspectRatio,
-                         Qt::SmoothTransformation);
-    m_label->setPixmap(*m_bootScreen);
+    // m_bootScreen = new QPixmap(":/res/bootScreen.png");
+    // m_bootScreen->scaled(this->size(), Qt::KeepAspectRatio,
+                        //  Qt::SmoothTransformation);
+    // m_label->setPixmap(*m_bootScreen);
+    QPixmap bootScreen(":/res/bootScreen.png");
+    bootScreen = bootScreen.scaled(this->size(), Qt::KeepAspectRatio,
+                                   Qt::SmoothTransformation);
+    m_label->setPixmap(bootScreen);
     m_label->setScaledContents(true);
     m_label->resize(this->size());
     m_label->show();
 
     // 淡入图片动画
+    fadeIn();
+
+    // 淡出图片动画
+    QTimer::singleShot(5000, this, &MainWindow::fadeOut);
+}
+
+void MainWindow::loadTitleScreen() {
+    disconnect(m_animation, &QPropertyAnimation::finished, this, &MainWindow::loadTitleScreen);
+    delete m_animation;
+    delete m_effect;
+    delete m_label;
+    // delete m_bootScreen;
+    m_animation = nullptr;
+    m_effect = nullptr;
+    m_label = nullptr;
+    // m_bootScreen = nullptr;
+    m_titlescreen = new TitleScreen(this);
+    m_titlescreen->show();
+    this->centralWidget()->hide();
+}
+
+void MainWindow::fadeOut() {
+    connect(m_animation, &QPropertyAnimation::finished, this,
+            &MainWindow::loadTitleScreen);
+    m_animation->setDuration(3000);
+    m_animation->setStartValue(1);
+    m_animation->setEndValue(0);
+    m_animation->start();
+}
+
+void MainWindow::fadeIn() {
     m_effect = new QGraphicsOpacityEffect(this);
     m_label->setGraphicsEffect(m_effect);
     m_animation = new QPropertyAnimation(m_effect, "opacity");
@@ -121,30 +157,4 @@ void MainWindow::loadBootScreen() {
     m_animation->setStartValue(0);
     m_animation->setEndValue(1);
     m_animation->start();
-
-    // 淡出图片动画
-    QTimer::singleShot(5000, this, [this]() {
-        connect(m_animation, &QPropertyAnimation::finished, this, [this]() {
-            delete m_animation;
-            delete m_effect;
-            delete m_label;
-            delete m_bootScreen;
-            m_animation = nullptr;
-            m_effect = nullptr;
-            m_label = nullptr;
-            m_bootScreen = nullptr;
-            // 动画结束后加载标题界面
-            loadTitleScreen();
-        });
-        m_animation->setDuration(3000);
-        m_animation->setStartValue(1);
-        m_animation->setEndValue(0);
-        m_animation->start();
-    });
-}
-
-void MainWindow::loadTitleScreen() {
-    m_titlescreen = new TitleScreen(this);
-    m_titlescreen->show();
-    this->centralWidget()->hide();
 }

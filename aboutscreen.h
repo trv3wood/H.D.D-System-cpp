@@ -21,6 +21,7 @@ private:
     void initUI();
     void backToTitleScreen();
     void showMoreInfo();
+    void playClickSound();
 };
 
 #endif // ABOUTSCREEN_H

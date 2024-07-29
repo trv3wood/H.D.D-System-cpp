@@ -36,6 +36,12 @@ private:
     void playThemeMusic();
     void jumpToAboutScreen();
     bool tryLauchZZZGame();
+    void openZZZWiki();
+    void quitApp();
+    void rePlayThemeMusic();
+    void playClickSound();
+    void louderThemeMusic();
+    void quieterThemeMusic();
 };
 
 #endif  // TITLESCREEN_H

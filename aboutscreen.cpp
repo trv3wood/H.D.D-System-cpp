@@ -18,6 +18,10 @@ AboutScreen::AboutScreen(QWidget *parent)
 
 AboutScreen::~AboutScreen()
 {
+    disconnect(ui->pushButton_1, &QPushButton::clicked, this, &AboutScreen::showMoreInfo);
+    disconnect(ui->pushButton_2, &QPushButton::clicked, this, &AboutScreen::backToTitleScreen);
+    disconnect(ui->pushButton_1, &QPushButton::clicked, this, &AboutScreen::playClickSound);
+    disconnect(ui->pushButton_2, &QPushButton::clicked, this, &AboutScreen::playClickSound);
     delete ui;
 }
 
@@ -31,6 +35,11 @@ void AboutScreen::initUI() {
     }
     this->resize(screenSize);
     ui->frame->resize(screenSize);
+    ui->layoutWidget->setGeometry(screenSize.width() * 0.25, screenSize.height() * 0.2,
+                                  screenSize.width() * 0.5, screenSize.height() * 0.5);
+    ui->label->resize(screenSize.width() * 0.3, screenSize.height() * 0.1);
+    ui->label_2->resize(screenSize.width() * 0.3, screenSize.height() * 0.3);
+
     QSize btnSize(screenSize.width() / 5, screenSize.height() / 25);
     // 设置圆角
     int radius = btnSize.height() / 2;
@@ -40,20 +49,15 @@ void AboutScreen::initUI() {
     QString fontName = QFontDatabase::applicationFontFamilies(fontID).at(0);
     QFont btnFont(fontName, btnSize.height() / 3);
     // 设置按钮样式
-    QString btnName = "pushButton_";
-    for (int i = 0; i < 2; i++) {
-        QString btn = btnName + QString::number(i + 1);
-        QPushButton *btnPtr = this->findChild<QPushButton *>(btn);
-        btnPtr->setFixedSize(btnSize);
-        btnPtr->setFont(btnFont);
-        btnPtr->setStyleSheet(btnStyle);
-        connect(btnPtr, &QPushButton::clicked, this,
-                [this]() { QSound::play(":/res/click.wav"); });
-    }
-    ui->layoutWidget->setGeometry(screenSize.width() * 0.25, screenSize.height() * 0.2,
-                                  screenSize.width() * 0.5, screenSize.height() * 0.5);
-    ui->label->resize(screenSize.width() * 0.3, screenSize.height() * 0.1);
-    ui->label_2->resize(screenSize.width() * 0.3, screenSize.height() * 0.3);
+    ui->pushButton_1->setFixedSize(btnSize);
+    ui->pushButton_1->setFont(btnFont);
+    ui->pushButton_1->setStyleSheet(btnStyle);
+    connect(ui->pushButton_1, &QPushButton::clicked, this, &AboutScreen::playClickSound);
+    ui->pushButton_2->setFixedSize(btnSize);
+    ui->pushButton_2->setFont(btnFont);
+    ui->pushButton_2->setStyleSheet(btnStyle);
+    connect(ui->pushButton_2, &QPushButton::clicked, this, &AboutScreen::playClickSound);
+
     ui->label->setFont(QFont(fontName, btnSize.height()));
     ui->label_2->setFont(QFont(fontName, btnSize.height() / 3));
     ui->label_3->setFont(QFont(fontName, btnSize.height() / 3));
@@ -77,4 +81,8 @@ void AboutScreen::showMoreInfo() {
                          "作者b站主页</a>");
     ui->label_3->show();
     ui->pushButton_1->hide();
+}
+
+void AboutScreen::playClickSound() {
+    QSound::play(":/res/click.wav");
 }

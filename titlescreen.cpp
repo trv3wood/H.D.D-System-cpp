@@ -1,3 +1,4 @@
+#include <cassert>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #include <windows.h>
 #endif
@@ -6,7 +7,6 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopServices>
-#include <QScreen>
 #include <QFont>
 #include <QFontDatabase>
 #include <QMediaPlayer>
@@ -15,15 +15,16 @@
 #include <QObject>
 #include <QPropertyAnimation>
 #include <QPushButton>
+#include <QScreen>
 #include <QSize>
 #include <QSound>
 #include <QTimer>
 #include <QUrl>
-#include <mutex>
 
 #include "aboutscreen.h"
 #include "titlescreen.h"
 #include "ui_titlescreen.h"
+
 
 TitleScreen::TitleScreen(QWidget *parent)
     : QWidget(parent),
@@ -38,22 +39,39 @@ TitleScreen::TitleScreen(QWidget *parent)
     initUI();
     // 启动游戏按钮
     connect(ui->pushButton_1, &QPushButton::clicked, this,
-            [this]() { tryLauchZZZGame(); });
+            &TitleScreen::tryLauchZZZGame);
     // 打开百科按钮
-    connect(ui->pushButton_2, &QPushButton::clicked, this, [this]() {
-        QDesktopServices::openUrl(QUrl("https://baike.mihoyo.com/zzz/wiki"));
-    });
+    connect(ui->pushButton_2, &QPushButton::clicked, this,
+            &TitleScreen::openZZZWiki);
     // 关于按钮
     connect(ui->pushButton_3, &QPushButton::clicked, this,
             &TitleScreen::jumpToAboutScreen);
     // 退出按钮
     connect(ui->pushButton_4, &QPushButton::clicked, this,
-            [this]() { QApplication::quit(); });
+            &TitleScreen::quitApp);
     // 按钮透明度动画
     btnsOpacityEffect();
 }
 
 TitleScreen::~TitleScreen() {
+    disconnect(ui->pushButton_1, &QPushButton::clicked, this,
+               &TitleScreen::tryLauchZZZGame);
+    disconnect(ui->pushButton_2, &QPushButton::clicked, this,
+               &TitleScreen::openZZZWiki);
+    disconnect(ui->pushButton_3, &QPushButton::clicked, this,
+               &TitleScreen::jumpToAboutScreen);
+    disconnect(ui->pushButton_4, &QPushButton::clicked, this,
+               &TitleScreen::quitApp);
+    disconnect(ui->pushButton_1, &QPushButton::clicked, this,
+               &TitleScreen::playClickSound);
+    disconnect(ui->pushButton_2, &QPushButton::clicked, this,
+               &TitleScreen::playClickSound);
+    disconnect(ui->pushButton_3, &QPushButton::clicked, this,
+               &TitleScreen::playClickSound);
+    disconnect(ui->pushButton_4, &QPushButton::clicked, this,
+               &TitleScreen::playClickSound);
+    disconnect(m_volumeAnimation, &QPropertyAnimation::finished, this, &TitleScreen::rePlayThemeMusic);
+    disconnect(m_player, &QMediaPlayer::stateChanged, this, &TitleScreen::louderThemeMusic);
     delete ui;
     delete m_player;
     delete m_volumeAnimation;
@@ -69,14 +87,8 @@ void TitleScreen::btnsOpacityEffect() {
     ui->layoutWidget->setGraphicsEffect(m_opacityEffect);
     m_timer = new QTimer(this);
     // 按钮透明度动画结束后，开始计时器
-    connect(m_opacityAnimation, &QPropertyAnimation::finished, this, [this]() {
-        delete m_opacityEffect;
-        m_opacityEffect = nullptr;
-        m_opacityAnimation = nullptr;
-        ui->label->setText("_");
-        m_timer->start(500);
-        this->playThemeMusic();
-    });
+    connect(m_opacityAnimation, &QPropertyAnimation::finished, this,
+            &TitleScreen::playThemeMusic);
     // 标题延时显示
     connect(m_timer, &QTimer::timeout, this, &TitleScreen::updateLabel);
     m_opacityAnimation->start(QAbstractAnimation::DeleteWhenStopped);
@@ -98,33 +110,30 @@ void TitleScreen::updateLabel() {
 }
 
 void TitleScreen::playThemeMusic() {
+    disconnect(m_opacityAnimation, &QPropertyAnimation::finished, this,
+               &TitleScreen::playThemeMusic);
+    delete m_opacityEffect;
+    m_opacityEffect = nullptr;
+    m_opacityAnimation = nullptr;
+    ui->label->setText("_");
+    m_timer->start(500);
     m_player = new QMediaPlayer;
     m_player->setMedia(QUrl("qrc:/res/zzzExplorer.mp3"));
     m_volumeAnimation = new QPropertyAnimation(m_player, "volume");
+    // 音量降为0后，重新播放
+    connect(m_volumeAnimation, &QPropertyAnimation::finished, this, &TitleScreen::rePlayThemeMusic);
     // 音量渐变
-    connect(m_player, &QMediaPlayer::stateChanged, this, [this]() {
-        // 开始播放后，音量渐趋上升
-        m_volumeAnimation->setDuration(5000);
-        m_volumeAnimation->setStartValue(0);
-        m_volumeAnimation->setEndValue(30);
-        m_volumeAnimation->start();
-        // 将要结束时，音量渐趋下降
-        QTimer::singleShot(48000, this, [this]() {
-            m_volumeAnimation->setStartValue(30);
-            m_volumeAnimation->setEndValue(0);
-            m_volumeAnimation->start();
-            // 音量降为0后，重新播放
-            connect(m_volumeAnimation, &QPropertyAnimation::finished, this,
-                    [this]() { m_player->play(); });
-        });
-    });
+    connect(m_player, &QMediaPlayer::stateChanged, this, &TitleScreen::louderThemeMusic);
     m_player->play();
 }
 
 void TitleScreen::jumpToAboutScreen() {
-    static std::once_flag aboutScreenFlag;
-    std::call_once(aboutScreenFlag,
-                   [this]() { m_aboutScreen = new AboutScreen(this);  });
+    static int count = 0;
+    if (!m_aboutScreen) {
+        m_aboutScreen = new AboutScreen(this);
+        count++;
+    }
+    assert(count == 1);
     m_aboutScreen->show();
 }
 
@@ -155,7 +164,7 @@ void TitleScreen::initUI() {
         btnPtr->setFont(btnFont);
         btnPtr->setStyleSheet(btnStyle);
         connect(btnPtr, &QPushButton::clicked, this,
-                [this]() { QSound::play(":/res/click.wav"); });
+                &TitleScreen::playClickSound);
     }
     // 四个按钮放在屏幕左下角
     ui->layoutWidget->setGeometry(btnSize.width() * 0.3,
@@ -194,7 +203,39 @@ bool TitleScreen::tryLauchZZZGame() {
 }
 #else
 bool TitleScreen::tryLauchZZZGame() {
-    QMessageBox::information(this, "操作系统不支持", "<font size='12' color='white'>无法启动绝区零</font>");
+    QMessageBox::information(
+        this, "操作系统不支持",
+        "<font size='12' color='white'>无法启动绝区零</font>");
     return false;
 }
 #endif
+
+void TitleScreen::openZZZWiki() {
+    QDesktopServices::openUrl(QUrl("https://baike.mihoyo.com/zzz/wiki"));
+}
+
+void TitleScreen::quitApp() { QApplication::quit(); }
+
+void TitleScreen::rePlayThemeMusic() {
+    if (m_player->state() == QMediaPlayer::StoppedState) {
+        m_player->play();
+    }
+}
+
+void TitleScreen::playClickSound() { QSound::play(":/res/click.wav"); }
+
+void TitleScreen::louderThemeMusic() {
+    // 开始播放后，音量渐趋上升
+    m_volumeAnimation->setDuration(5000);
+    m_volumeAnimation->setStartValue(0);
+    m_volumeAnimation->setEndValue(30);
+    m_volumeAnimation->start();
+    // 将要结束时，音量渐趋下降
+    QTimer::singleShot(48000, this, &TitleScreen::quieterThemeMusic);
+}
+
+void TitleScreen::quieterThemeMusic() {
+    m_volumeAnimation->setStartValue(30);
+    m_volumeAnimation->setEndValue(0);
+    m_volumeAnimation->start();
+}

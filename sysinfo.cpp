@@ -62,7 +62,7 @@ SYSinfo::SYSinfo() {
 
     // CPU cores
     int nCores = 0;
-    getCPUInfo(nCores);
+    getCPUCore(nCores);
     m_data[2] += ": " + std::to_string(nCores);
 
     // CPU threads
@@ -95,7 +95,7 @@ SYSinfo::SYSinfo() {
         " GB";
 }
 
-void SYSinfo::getCPUInfo(int& cpu_cores) {
+void SYSinfo::getCPUCore(int& cpu_cores) {
     DWORD bufferSize = 0;
     GetLogicalProcessorInformation(nullptr, &bufferSize);
     std::vector<SYSTEM_LOGICAL_PROCESSOR_INFORMATION> buffer(bufferSize / sizeof(SYSTEM_LOGICAL_PROCESSOR_INFORMATION));

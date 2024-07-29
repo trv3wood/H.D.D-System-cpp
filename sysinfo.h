@@ -9,7 +9,7 @@ struct SYSinfo {
         "CPU_THREADS",         "MEMORY",    "DISK",     "// COMPLETE."};
 
     SYSinfo();
-    void getCPUInfo(int& cpu_cores);
+    void getCPUCore(int& cpu_cores);
     void getCPUname(std::string& cpuName);
 };
 #endif  // SYSINFO_H

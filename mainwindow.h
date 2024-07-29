@@ -29,7 +29,7 @@ private:
     Ui::MainWindow* ui;
     QTimer* m_timer = nullptr;
     SYSinfo* m_sysinfo = nullptr;
-    QPixmap* m_bootScreen = nullptr;
+    // QPixmap* m_bootScreen = nullptr;
     QGraphicsOpacityEffect* m_effect = nullptr;
     QPropertyAnimation* m_animation = nullptr;
     QLabel* m_label = nullptr;
@@ -40,6 +40,8 @@ private:
     void codePrintUpdate();
     void loadBootScreen();
     void loadTitleScreen();
+    void fadeOut();
+    void fadeIn();
 signals:
     void bootCompleted();
     // void animationFinished();
