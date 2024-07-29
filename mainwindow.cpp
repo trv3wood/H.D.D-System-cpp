@@ -34,19 +34,19 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowTitle("H.D.D System");
 
     // 获取屏幕大小
-    QSize sreen_size = QApplication::screens().at(0)->size();
+    QSize screen_size = QApplication::screens().at(0)->size();
     // 设置窗口大小
     this->showFullScreen();
     this->setMinimumSize(800, 600);
-    this->centralWidget()->resize(sreen_size);
+    this->centralWidget()->resize(screen_size);
 
     // 设置文本框
-    QFont font("Microsoft Yahei", this->size().height() / 120.0);
+    QFont font("Microsoft Yahei", 14);
     ui->textEdit->setFont(font);
     ui->textEdit->setStyleSheet("color: white;");
     ui->textEdit->setAlignment(Qt::AlignLeft);
     ui->textEdit->setReadOnly(true);
-    ui->textEdit->resize(sreen_size * 0.9);
+    ui->textEdit->resize(screen_size * 0.9);
     ui->textEdit->setFrameShape(QFrame::NoFrame);
 
     // 将定时器绑定到自检更新函数

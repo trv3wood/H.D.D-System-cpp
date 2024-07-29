@@ -13,3 +13,12 @@
 
 ## 作者
 [bilibili@混沌之人1823](https://space.bilibili.com/433370534)
+
+---
+This is a GUI program which is a recreation of the H.D.D system from the game "Zenless Zone Zero", implemented using Qt C++. 
+
+The program can be downloaded and run on Windows and Linux platforms. Alternatively, it can be compiled and run using Qt 5.15.x.
+
+This project was inspired by [PPicku/H.D.D-System](https://github.com/PPicku/H.D.D-System), and I would like to thank them for providing the game font resources.
+
+Author: [bilibili@混沌之人1823](https://space.bilibili.com/433370534)

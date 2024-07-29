@@ -194,7 +194,7 @@ bool TitleScreen::tryLauchZZZGame() {
 }
 #else
 bool TitleScreen::tryLauchZZZGame() {
-    QMessageBox::information(this, "提示", "仅支持Windows系统");
+    QMessageBox::information(this, "操作系统不支持", "<font size='12' color='white'>无法启动绝区零</font>");
     return false;
 }
 #endif
