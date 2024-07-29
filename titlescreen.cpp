@@ -6,7 +6,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDesktopServices>
-#include <QDesktopWidget>
+#include <QScreen>
 #include <QFont>
 #include <QFontDatabase>
 #include <QMediaPlayer>
@@ -19,6 +19,7 @@
 #include <QSound>
 #include <QTimer>
 #include <QUrl>
+#include <mutex>
 
 #include "aboutscreen.h"
 #include "titlescreen.h"
@@ -56,6 +57,7 @@ TitleScreen::~TitleScreen() {
     delete ui;
     delete m_player;
     delete m_volumeAnimation;
+    delete m_aboutScreen;
 }
 
 void TitleScreen::btnsOpacityEffect() {
@@ -120,7 +122,9 @@ void TitleScreen::playThemeMusic() {
 }
 
 void TitleScreen::jumpToAboutScreen() {
-    m_aboutScreen = new AboutScreen(this);
+    static std::once_flag aboutScreenFlag;
+    std::call_once(aboutScreenFlag,
+                   [this]() { m_aboutScreen = new AboutScreen(this);  });
     m_aboutScreen->show();
 }
 
@@ -130,7 +134,7 @@ void TitleScreen::initUI() {
     if (this->parentWidget()) {
         screenSize = parentWidget()->size();
     } else {
-        screenSize = QApplication::desktop()->size();
+        screenSize = QApplication::screens().at(0)->size();
     }
     this->resize(screenSize);
     ui->frame->resize(screenSize);
