@@ -1,4 +1,4 @@
-#include <cassert>
+// #include <cassert>
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
 #include <windows.h>
 #endif
@@ -76,6 +76,9 @@ TitleScreen::~TitleScreen() {
     delete m_player;
     delete m_volumeAnimation;
     delete m_aboutScreen;
+    // assert(m_opacityEffect == nullptr);
+    // assert(m_opacityAnimation == nullptr);
+    // assert(m_timer == nullptr);
 }
 
 void TitleScreen::btnsOpacityEffect() {
@@ -128,12 +131,9 @@ void TitleScreen::playThemeMusic() {
 }
 
 void TitleScreen::jumpToAboutScreen() {
-    static int count = 0;
     if (!m_aboutScreen) {
         m_aboutScreen = new AboutScreen(this);
-        count++;
     }
-    assert(count == 1);
     m_aboutScreen->show();
 }
 

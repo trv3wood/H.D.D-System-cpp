@@ -8,6 +8,7 @@
 #include <QString>
 #include <QTextEdit>
 #include <QTimer>
+// #include <cassert>
 #include <chrono>
 #include <sstream>
 #include <string>
@@ -24,7 +25,6 @@ MainWindow::MainWindow(QWidget *parent)
       ui(new Ui::MainWindow),
       m_timer(new QTimer(this)),
       m_sysinfo(new SYSinfo()),
-    //   m_bootScreen(nullptr),
       m_effect(nullptr),
       m_animation(nullptr),
       m_label(nullptr),
@@ -61,6 +61,11 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow() {
     delete ui;
     delete m_titlescreen;
+    // assert(m_sysinfo == nullptr);
+    // assert(m_effect == nullptr);
+    // assert(m_animation == nullptr);
+    // assert(m_label == nullptr);
+    // assert(m_timer == nullptr);
 }
 
 void MainWindow::selfTestUpdate() {
@@ -106,10 +111,6 @@ void MainWindow::loadBootScreen() {
     ui->textEdit->hide();
     // 设置启动画面
     m_label = new QLabel(this);
-    // m_bootScreen = new QPixmap(":/res/bootScreen.png");
-    // m_bootScreen->scaled(this->size(), Qt::KeepAspectRatio,
-                        //  Qt::SmoothTransformation);
-    // m_label->setPixmap(*m_bootScreen);
     QPixmap bootScreen(":/res/bootScreen.png");
     bootScreen = bootScreen.scaled(this->size(), Qt::KeepAspectRatio,
                                    Qt::SmoothTransformation);
@@ -130,11 +131,9 @@ void MainWindow::loadTitleScreen() {
     delete m_animation;
     delete m_effect;
     delete m_label;
-    // delete m_bootScreen;
     m_animation = nullptr;
     m_effect = nullptr;
     m_label = nullptr;
-    // m_bootScreen = nullptr;
     m_titlescreen = new TitleScreen(this);
     m_titlescreen->show();
     this->centralWidget()->hide();

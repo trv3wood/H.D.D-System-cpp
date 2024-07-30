@@ -45,6 +45,7 @@ else()
             code.h
             titlescreen.h titlescreen.cpp titlescreen.ui
             aboutscreen.h aboutscreen.cpp aboutscreen.ui
+            icon.rc
         )
     endif()
 endif()
