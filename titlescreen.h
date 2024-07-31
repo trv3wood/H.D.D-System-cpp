@@ -1,7 +1,6 @@
 #ifndef TITLESCREEN_H
 #define TITLESCREEN_H
 
-#include "aboutscreen.h"
 #include <QGraphicsOpacityEffect>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
@@ -9,6 +8,11 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QWidget>
+
+#include "aboutscreen.h"
+#include "connectscreen.h"
+#include "exitscreen.h"
+
 
 namespace Ui {
 class TitleScreen;
@@ -29,17 +33,19 @@ private:
     QMediaPlayer *m_player;
     QPropertyAnimation *m_volumeAnimation;
     AboutScreen *m_aboutScreen;
+    ConnectScreen *m_connectScreen;
+    ExitScreen *m_exitScreen;
 
     void initUI();
     void btnsOpacityEffect();
     void updateLabel();
     void playThemeMusic();
     void jumpToAboutScreen();
+    void jumpToConnectScreen();
     bool tryLauchZZZGame();
     void openZZZWiki();
-    void quitApp();
+    void jumpToExitScreen();
     void rePlayThemeMusic();
-    void playClickSound();
     void louderThemeMusic();
     void quieterThemeMusic();
 };

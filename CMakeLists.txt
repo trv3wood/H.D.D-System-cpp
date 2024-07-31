@@ -46,6 +46,10 @@ else()
             titlescreen.h titlescreen.cpp titlescreen.ui
             aboutscreen.h aboutscreen.cpp aboutscreen.ui
             icon.rc
+            uiconfig.h uiconfig.cpp
+            connectscreen.h connectscreen.cpp connectscreen.ui
+            paintwidget.h paintwidget.cpp
+            exitscreen.h exitscreen.cpp exitscreen.ui
         )
     endif()
 endif()

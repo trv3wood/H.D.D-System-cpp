@@ -1,5 +1,6 @@
 #include "aboutscreen.h"
 #include "ui_aboutscreen.h"
+#include "uiconfig.h"
 #include <QApplication>
 #include <QFontDatabase>
 #include <QSound>
@@ -20,20 +21,12 @@ AboutScreen::~AboutScreen()
 {
     disconnect(ui->pushButton_1, &QPushButton::clicked, this, &AboutScreen::showMoreInfo);
     disconnect(ui->pushButton_2, &QPushButton::clicked, this, &AboutScreen::backToTitleScreen);
-    disconnect(ui->pushButton_1, &QPushButton::clicked, this, &AboutScreen::playClickSound);
-    disconnect(ui->pushButton_2, &QPushButton::clicked, this, &AboutScreen::playClickSound);
     delete ui;
 }
 
 void AboutScreen::initUI() {
-// 根据父窗口大小调整控件大小
-    QSize screenSize;
-    if (this->parentWidget()) {
-        screenSize = parentWidget()->size();
-    } else {
-        screenSize = QApplication::screens().at(0)->size();
-    }
-    this->resize(screenSize);
+    // 根据父窗口大小调整控件大小
+    QSize screenSize = CustomWidget::adjustSize(this);
     ui->frame->resize(screenSize);
     ui->layoutWidget->setGeometry(screenSize.width() * 0.25, screenSize.height() * 0.2,
                                   screenSize.width() * 0.5, screenSize.height() * 0.5);
@@ -45,18 +38,11 @@ void AboutScreen::initUI() {
     int radius = btnSize.height() / 2;
     QString btnStyle = QString("border-radius: %1px;").arg(radius);
     // 设置按钮字体
-    int fontID = QFontDatabase::addApplicationFont(":/res/zzzfont.ttf");
-    QString fontName = QFontDatabase::applicationFontFamilies(fontID).at(0);
+    QString fontName = std::move(ZZZFont::get());
     QFont btnFont(fontName, btnSize.height() / 3);
     // 设置按钮样式
-    ui->pushButton_1->setFixedSize(btnSize);
-    ui->pushButton_1->setFont(btnFont);
-    ui->pushButton_1->setStyleSheet(btnStyle);
-    connect(ui->pushButton_1, &QPushButton::clicked, this, &AboutScreen::playClickSound);
-    ui->pushButton_2->setFixedSize(btnSize);
-    ui->pushButton_2->setFont(btnFont);
-    ui->pushButton_2->setStyleSheet(btnStyle);
-    connect(ui->pushButton_2, &QPushButton::clicked, this, &AboutScreen::playClickSound);
+    CustomBtn::setCustomBtn(ui->pushButton_1, btnSize, btnStyle, btnFont);
+    CustomBtn::setCustomBtn(ui->pushButton_2, btnSize, btnStyle, btnFont);
 
     ui->label->setFont(QFont(fontName, btnSize.height()));
     ui->label_2->setFont(QFont(fontName, btnSize.height() / 3));
@@ -81,8 +67,4 @@ void AboutScreen::showMoreInfo() {
                          "作者b站主页</a>");
     ui->label_3->show();
     ui->pushButton_1->hide();
-}
-
-void AboutScreen::playClickSound() {
-    QSound::play(":/res/click.wav");
 }

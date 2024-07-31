@@ -37,7 +37,6 @@ MainWindow::MainWindow(QWidget *parent)
     QSize screen_size = QApplication::screens().at(0)->size();
     // 设置窗口大小
     this->showFullScreen();
-    this->setMinimumSize(800, 600);
     this->centralWidget()->resize(screen_size);
 
     // 设置文本框
