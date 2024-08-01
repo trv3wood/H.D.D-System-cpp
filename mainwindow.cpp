@@ -10,6 +10,7 @@
 #include <QTimer>
 // #include <cassert>
 #include <chrono>
+#include <cstddef>
 #include <sstream>
 #include <string>
 #include <thread>
@@ -69,7 +70,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::selfTestUpdate() {
     QTextEdit *textEdit = ui->textEdit;
-    static int count = 0;
+    static size_t count = 0;
     if (count < m_sysinfo->m_data.size()) {
         // 显示系统信息
         textEdit->append(m_sysinfo->m_data[count].c_str());

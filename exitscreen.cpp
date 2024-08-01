@@ -26,7 +26,7 @@ void ExitScreen::initUI() {
         screenSize.width() * 0.5, screenSize.height() * 0.5);
     ui->label->setGeometry(screenSize.width() * 0.3, screenSize.height() * 0.3,
                            screenSize.width() * 0.2, screenSize.height() * 0.2);
-    QString fontName = std::move(ZZZFont::get());
+    QString fontName = ZZZFont::get();
     QSize btnSize(screenSize.width() / 6, screenSize.height() / 25);
     int btnRadius = btnSize.height() / 2;
     QString btnStyle = QString("border-radius: %1px;").arg(btnRadius);

@@ -3,7 +3,7 @@
 #include "uiconfig.h"
 
 PaintWidget::PaintWidget(QWidget *parent)
-    : QWidget(parent), m_timer(new QTimer(this)), m_startAngle(0) {
+    : QWidget(parent), m_startAngle(0), m_timer(new QTimer(this)) {
     initUI();
     m_timer->start(100);
     connect(m_timer, &QTimer::timeout, this, &PaintWidget::repaintCircle);

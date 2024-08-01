@@ -176,7 +176,7 @@ void TitleScreen::initUI() {
     int btnRadius = btnSize.height() / 2;
     QString btnStyle = QString("border-radius: %1px;").arg(btnRadius);
     // 设置按钮字体
-    QString fontName = std::move(ZZZFont::get());
+    QString fontName = ZZZFont::get();
     QFont btnFont(fontName, btnSize.height() / 3);
     // 设置按钮样式
     CustomBtn::setCustomBtn(ui->pushButton_1, btnSize, btnStyle, btnFont);
